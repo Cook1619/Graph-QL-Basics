@@ -3,26 +3,38 @@ import { GraphQLServer } from "graphql-yoga";
 //Type definitions (schema)
 const typeDefs = `
   type Query {
-    hello: String!
-    name: String!
-    location: String!
-    bio: String!
+    me: User!
+    post: Post!
+  }
+  type User {
+      id: ID!
+      name: String!
+      email: String!
+      age: Int
+  }
+  type Post {
+      id: ID!
+      title: String!
+      body: String!
   }
 `;
 
 const resolvers = {
   Query: {
-    hello() {
-      return "Hello World!!";
+    me() {
+      return {
+        id: "abc123",
+        name: "Matt",
+        email: "cook@example.com",
+      };
     },
-    name() {
-      return "Hello Matt!!";
-    },
-    location() {
-      return "Mayer, MN";
-    },
-    bio() {
-      return "I'm a fullstack web dev from Minnesota";
+    post() {
+      return {
+        id: "123nbc",
+        title: "This is a post title",
+        body:
+          "This is the body of the post which has more words than the title",
+      };
     },
   },
 };
