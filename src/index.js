@@ -3,6 +3,8 @@ import { GraphQLServer } from "graphql-yoga";
 //Type definitions (schema)
 const typeDefs = `
   type Query {
+    greeting(name: String): String!
+    add(number1: Float!, number2: Float!): Float!
     me: User!
     post: Post!
   }
@@ -16,6 +18,7 @@ const typeDefs = `
       id: ID!
       title: String!
       body: String!
+      published: Boolean!
   }
 `;
 
@@ -34,7 +37,17 @@ const resolvers = {
         title: "This is a post title",
         body:
           "This is the body of the post which has more words than the title",
+        published: true,
       };
+    },
+    greeting(parent, args, ctx, info) {
+      if (args.name) {
+        return `Hello ${args.name}`;
+      }
+      return `No name provided`;
+    },
+    add(parent, args, ctx, info) {
+      return args.number1 + args.number2;
     },
   },
 };
