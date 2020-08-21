@@ -1,10 +1,58 @@
 import { GraphQLServer } from "graphql-yoga";
 
+// Dummy Data
+const users = [
+  {
+    id: 1,
+    name: "Matt",
+    email: "cook@example.com",
+    age: 33,
+  },
+  {
+    id: 2,
+    name: "Danelle",
+    email: "danelle@example.com",
+  },
+  {
+    id: 3,
+    name: "Jules",
+    email: "jules@example.com",
+    age: 6,
+  },
+];
+
+const posts = [
+  {
+    id: 1,
+    title: "Javascript Post",
+    body: "This is a post on why JS is so awesome and unqiue",
+    published: true,
+  },
+  {
+    id: 2,
+    title: "CSS Post",
+    body: "This is a post on why CSS is so awesome and difficult",
+    published: true,
+  },
+  {
+    id: 3,
+    title: "React Post",
+    body: "This is a post on why React is so performant and awesome",
+    published: true,
+  },
+  {
+    id: 4,
+    title: "NextJS Post",
+    body: "This is a post on why NextJS is so awesome and unqiue",
+    published: true,
+  },
+];
+
 //Type definitions (schema)
 const typeDefs = `
   type Query {
-    greeting(name: String): String!
-    add(number1: Float!, number2: Float!): Float!
+    users(query: String): [User!]!
+    posts(query: String): [Post!]!
     me: User!
     post: Post!
   }
@@ -40,14 +88,24 @@ const resolvers = {
         published: true,
       };
     },
-    greeting(parent, args, ctx, info) {
-      if (args.name) {
-        return `Hello ${args.name}`;
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users;
       }
-      return `No name provided`;
+      return users.filter((user) => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
+      });
     },
-    add(parent, args, ctx, info) {
-      return args.number1 + args.number2;
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts;
+      }
+      return posts.filter((post) => {
+        return (
+          post.title.toLowerCase().includes(args.query.toLowerCase()) ||
+          post.body.toLowerCase().includes(args.query.toLowerCase())
+        );
+      });
     },
   },
 };
