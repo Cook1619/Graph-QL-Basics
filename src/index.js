@@ -23,32 +23,59 @@ const users = [
 
 const posts = [
   {
-    id: "1",
+    id: "4",
     title: "Javascript Post",
     body: "This is a post on why JS is so awesome and unqiue",
     published: true,
     author: "1",
   },
   {
-    id: "2",
+    id: "5",
     title: "CSS Post",
     body: "This is a post on why CSS is so awesome and difficult",
     published: true,
     author: "1",
   },
   {
-    id: "3",
+    id: "6",
     title: "React Post",
     body: "This is a post on why React is so performant and awesome",
     published: true,
     author: "2",
   },
   {
-    id: "4",
+    id: "7",
     title: "NextJS Post",
     body: "This is a post on why NextJS is so awesome and unqiue",
     published: true,
     author: "3",
+  },
+];
+
+const comments = [
+  {
+    id: "11",
+    text: "This is a comment about the React post",
+    author: "1",
+    post: "4",
+  },
+  {
+    id: "12",
+    text: "This is a comment about the CSS post",
+    author: "2",
+    post: "5",
+  },
+  {
+    id: "13",
+    text: "This is a comment about the NextJS post",
+    author: "2",
+    post: "6",
+  },
+  {
+    id: "14",
+    text: "This is a comment about the Javascript post",
+    author: "3",
+    post: "7",
   },
 ];
 
@@ -57,6 +84,7 @@ const typeDefs = `
   type Query {
     users(query: String): [User!]!
     posts(query: String): [Post!]!
+    comments: [Comment!]!
     me: User!
     post: Post!
   }
@@ -66,6 +94,7 @@ const typeDefs = `
       email: String!
       age: Int
       posts: [Post!]!
+      comments: [Comment!]!
   }
   type Post {
       id: ID!
@@ -73,9 +102,13 @@ const typeDefs = `
       body: String!
       published: Boolean!
       author: User!
+      comments: [Comment!]!
   }
   type Comment {
-      
+      id: ID!
+      text: String!
+      author: User!
+      post: Post!
   }
 `;
 
@@ -105,11 +138,14 @@ const resolvers = {
         return isTitleMatch || isBodyMatch;
       });
     },
+    comments(parent, args, ctx, info) {
+      return comments;
+    },
     me() {
       return {
-        id: "123098",
-        name: "Mike",
-        email: "mike@example.com",
+        id: "123abc",
+        name: "Danelle",
+        email: "danelle@example.com",
       };
     },
     post() {
@@ -127,11 +163,33 @@ const resolvers = {
         return user.id === parent.author;
       });
     },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => {
+        return comment.post === parent.id;
+      });
+    },
   },
   User: {
     posts(parent, args, cxt, info) {
       return posts.filter((post) => {
         return post.author === parent.id;
+      });
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => {
+        return comment.author === parent.id;
+      });
+    },
+  },
+  Comment: {
+    author(parent, args, cxt, info) {
+      return users.find((user) => {
+        return user.id === parent.author;
+      });
+    },
+    post(parent, args, cxt, info) {
+      return posts.find((post) => {
+        return post.id === parent.post;
       });
     },
   },
